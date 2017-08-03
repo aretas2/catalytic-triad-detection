@@ -6,21 +6,23 @@ Created on June 15 22:40:41 2017
 @author: Aretas
 """
 ###Accepts serine protease PDB file as an input
-import argparse
+import sys
 import math
 
 class PDBatom:
     def __init__(self, string):
         self.atom_number = string[4:11].strip()
         self.name = string[12:17].strip()
-        self.residue = string[17:20].strip()
+        self.residue = string[17:21].strip()
         self.chain = string[21:22].strip()
         self.residue_number = string[22:26].strip()
         self.x_cord = float(string[30:38].strip())
         self.y_cord = float(string[38:46].strip())
         self.z_cord = float(string[46:54].strip())
+        self.factor = string[60:67].strip()
+        self.fullline = string.strip("\n")
 
-#function to measure distance between two atoms and sort by the lenght of distance
+#function to measure distance between two atoms and sort by the max lenght of distance
 def distance (list1, list2, distance_dict, max_distance):
     for element1 in list1:
         for element2 in list2:
@@ -64,7 +66,7 @@ def find_triad1 (SH_dict, SD_dict, HD_dict):
                             triad_residues = serine_atom.residue_number + "-" + \
                                 his_atom3.residue_number + "-" + asp_atom3.residue_number
                             print ("The triad atoms of {} chain {} are:".format\
-                                (args.pdb_file, his_atom3.chain),\
+                                (sys.argv[1], his_atom3.chain),\
                                 triad_atoms, "The triad residue numbers are: {}"\
                                 .format(triad_residues))
                             #print (value, value1, value2)
@@ -72,18 +74,13 @@ def find_triad1 (SH_dict, SD_dict, HD_dict):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-pdb', '--pdb_file',
-        help='choose a PDB file', required=True)
-    args = parser.parse_args()
-
     #Setting dictionaries and variables to use
     ser_OG_list = []  #atom number : xyz coordinates as list [x, y, z]
     asp_OD2_list = []
     his_ND1_list = []
 
     try:
-        with open(args.pdb_file) as pdb_file:
+        with open(sys.argv[1]) as pdb_file:
             for line in pdb_file:
                 if line.startswith("ATOM"):
                     atom = PDBatom(line)
@@ -94,13 +91,13 @@ if __name__ == "__main__":
                     if atom.residue == "HIS" and atom.name == "CE1":
                         his_ND1_list.append(atom)
     except IOError:
-        print ('Could not open the file!', args.pdb_file)
+        print ('Could not open the file!', sys.argv[1])
         exit()
 
     #set the lowest distance threshold allowed
     max_distance_SerHis = 4
-    max_distance_SerAsp = 8.5
-    max_distance_HisAsp = 6
+    max_distance_SerAsp = 9
+    max_distance_HisAsp = 5
     distance_dictSH = {} #distance between two atoms; two atom numbers : distance
     distance_dictSD = {}
     distance_dictHD = {}
@@ -119,4 +116,4 @@ if __name__ == "__main__":
     find_triad1 (distance_dictSH, distance_dictSD, distance_dictHD)
 
     if triad_atoms == None:
-        print ("Failed to detect the catalytic triad for {}!".format(args.pdb_file))
+        print ("Failed to detect the catalytic triad for {}!".format(sys.argv[1]))
