@@ -22,7 +22,7 @@ class PDBatom:
         self.factor = string[60:67].strip()
         self.fullline = string.strip("\n")
 
-#function to measure distance between two atoms and sort by the max lenght of distance
+#a function to measure distance between two atoms and sort by the max lenght of distance
 def distance (list1, list2, distance_dict, max_distance):
     for element1 in list1:
         for element2 in list2:
@@ -41,7 +41,7 @@ def gamma_angle (a, b, c):
     gamma  = math.acos ((a**2 + b**2 - c**2) / (2*a*b))
     return gamma
 
-#this part deals with the angles of between triad residues to determine the triad
+#this part deals with the angles between triad residues to determine the triad
 #finding the catalytic triad
 def find_triad1 (SH_dict, SD_dict, HD_dict):
     for key, value in SH_dict.items():
@@ -94,7 +94,7 @@ if __name__ == "__main__":
         print ('Could not open the file!', sys.argv[1])
         exit()
 
-    #set the lowest distance threshold allowed
+    #set the max distance threshold allowed
     max_distance_SerHis = 4
     max_distance_SerAsp = 9
     max_distance_HisAsp = 5
