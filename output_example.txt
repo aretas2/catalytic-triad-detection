@@ -1,0 +1,1 @@
+The triad atoms of 1agj_A.pdb chain A are: 1539-586-953 The triad residue numbers are: 195-72-120
